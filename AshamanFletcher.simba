@@ -33,7 +33,7 @@ Const
 
 Procedure DeclarePlayers;
 Begin
-  Players.Setup(['Player1'], 'PlayerList'); //***Fill this out, Player1 = Name of the account in player manager, PlayerList = name of the player file***
+  Players.Setup(['Player1'], 'PlayerList'); //***Fill this out, Player1 = Name of the account in player manager, PlayerList = name of the player file (comment out if not using player manager)***
   SetLength(Players,1);
 
   //***If NOT using the player manager, fill out the loginname and password below, otherwise ignore those two***
@@ -42,7 +42,7 @@ Begin
   // loginName := '';      {Remove the "//" from this line if you arent using player manager}
   // password := '';       {Remove the "//" from this line if you arent using player manager}
     IsActive := True;
-    World := 96;           {Change this if you want to set a world to login to}
+    World := 0;            {Change this if you want to set a world to login to}
    // BankPin := ;         {Remove the "//" from this line if you arent using player manager and you have a pin}
   End;
   CurrentPlayer := 0;
@@ -247,7 +247,7 @@ Begin
     2..7:
       Begin
         hoverSkill(Skill_Fletching);
-        Wait(GaussRangeInt(0,2000));
+        Wait(GaussRangeInt(600,2000));
       End;
     8..50: mouseMovingObject;
     51..100: SleepAndMoveMouse(GaussRangeInt(100,MouseB));
