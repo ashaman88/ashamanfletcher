@@ -401,7 +401,7 @@ Begin
       If Length(TPA) > 30 Then
       Begin
         SetArrayLength(TBA, Length(TBA)+1);
-        ChestBox.Edit(+12,+2,0,-2);
+        ChestBox.Edit(+12,+2,-10,-2);
         TBA[High(TBA)] := ChestBox;
       End;
       SetLength(TPA,0);
