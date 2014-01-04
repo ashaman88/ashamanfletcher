@@ -64,7 +64,7 @@ Var
   GetItem: Boolean;
 
 Const
-  ScriptVersion = '1.0';
+  ScriptVersion = '1.1';
   Debug = False;
 
 Function MakeItemMenu(Time: Integer; Exits: Boolean=False): Boolean;
@@ -486,7 +486,8 @@ Begin
   Repeat
     Wait(Random(100));
     If OpenBank(LeftClick) Then
-      Break;
+      Break Else
+      Minimap.SetAngle(MM_DIRECTION_EAST);
     If (T.GetTime>Time) Or (Not IsLoggedIn) Then
       Exit;
   Until (BankScreen.IsOpen Or Pinscreen.IsOpen);
