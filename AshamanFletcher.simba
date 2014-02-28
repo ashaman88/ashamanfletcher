@@ -63,7 +63,7 @@ Var
   GetItem: Boolean;
 
 Const
-  ScriptVersion = '1.5';
+  ScriptVersion = '1.6';
   Debug = False;
 
 procedure declarePlayers();
@@ -80,7 +80,7 @@ begin
       // convert the integers
       integers[0] := strToInt(playerForm.players[i].settings[2]);  //minutes until break
       integers[1] := strToInt(playerForm.players[i].settings[3]);  //minutes to break
-
+      ismember:=true;
 
       for j := 0 to high(playerForm.comboBoxItems[1]) do
         if (playerForm.players[i].settings[9] = playerForm.comboBoxItems[1][j]) then
@@ -122,7 +122,7 @@ begin
     // this needs to be done for every element in the comboBoxLabels array
     setLength(comboBoxItems, length(comboBoxLabels));
     comboBoxItems[0] := ['Cut', 'String'];       // all the options available for the first combo box
-    comboBoxItems[1] := ['BANK_NPC_BLUE', 'BANK_NPC_GREY', 'BANK_NPC_GREEN', 'BANK_BOOTH', 'BANK_CHEST_SW', 'BANK_CHEST_SHANTAY', 'BANK_CHEST_DUEL', 'BANK_CHEST_CW', 'BANK_CHEST_GROTTO', 'BANK_CHEST_BURTHORPE'];       // all the options available for the first combo box
+    comboBoxItems[1] := ['BANK_NPC_BLUE', 'BANK_NPC_GREY', 'BANK_NPC_GREEN', 'BANK_NPC_DRAYNOR', 'BANK_BOOTH', 'BANK_CHEST_SW', 'BANK_CHEST_SHANTAY', 'BANK_CHEST_DUEL', 'BANK_CHEST_CW', 'BANK_CHEST_GROTTO', 'BANK_CHEST_BURTHORPE'];       // all the options available for the first combo box
   end;
 end;
 
@@ -301,7 +301,6 @@ Begin
         Players[CurrentPlayer].World := 0;
       Players[CurrentPlayer].Login;
       Wait(4000);
-      Timeout.Reset;
       Timeout.Start;
       Result := IsLoggedIn;
       Minimap.SetAngle(MM_DIRECTION_EAST);
@@ -348,7 +347,6 @@ Begin
   Case LowerCase(Players[CurrentPlayer].Strings[1]) Of
     'cut':
     Begin
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(8000, 12000);
       Repeat
@@ -362,7 +360,6 @@ Begin
 
     'string':
     Begin
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(8000, 12000);
       Repeat
@@ -373,7 +370,6 @@ Begin
         Wait(GaussRangeInt(0, 1500));
       Until False;
 
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(8000, 12000);
       Repeat
@@ -391,7 +387,6 @@ Begin
 
   MouseBox([293,332,505,348]);
 
-  T.Reset;
   T.Start;
   Repeat
     Wait(GaussRangeInt(0, 300));
@@ -453,7 +448,6 @@ Begin
       If Debug Then
         Writeln('Waiting for production menu');
 
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(6000, 12000);
       Repeat
@@ -468,13 +462,14 @@ Begin
         Writeln('Trying to select designated box');
 
       If Not Productionscreen.selectbox(Players[CurrentPlayer].Integers[3]) Then
-        Exit;
-
-      If GetItem Then
       Begin
-        ItemType:= Productionscreen.getSelectedBoxText;
-        GetItem:=False;
+        Writeln('Your desired box is not valid, shutting down');
+        Terminatescript;
       End;
+
+      If ItemType='' Then
+        ItemType:= Productionscreen.getSelectedBoxText;
+
 
       If Debug Then
         Writeln('Clicking start on production screen');
@@ -495,7 +490,6 @@ Begin
 
       Wait(GaussRangeInt(0, 1500));
 
-      Timeout.Reset;
       Timeout.Start;
 
       If Debug Then
@@ -517,7 +511,6 @@ Begin
       Wait(GaussRangeInt(0, 100));
       MouseBox([293,332,505,348]);
 
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(6000, 12000);
       Repeat
@@ -528,14 +521,14 @@ Begin
 
       Wait(GaussRangeInt(0, 400));
 
-      If GetItem Then
-      Begin
+      If ItemType='' Then
         ItemType:= Productionscreen.getSelectedBoxText;
-        GetItem:=False;
-      End;
 
       If Not Productionscreen.selectbox(Players[CurrentPlayer].Integers[3]) Then
-        Exit;
+      Begin
+        Writeln('Your desired box is not valid, shutting down');
+        Terminatescript;
+      End;
 
       Productionscreen.ClickStart;
 
@@ -545,10 +538,8 @@ Begin
 
       Wait(GaussRangeInt(0, 1500));
 
-      Timeout.Reset;
       Timeout.Start;
 
-      T.Reset;
       T.Start;
       Time:=GaussRangeInt(25000, 45000);
       Repeat
@@ -586,6 +577,8 @@ Begin
 
   declarePlayers();
 
+  smartPlugins := ['OpenGL32.dll','d3d9.dll'];
+
   SetupSRL;
 
   If Not IsLoggedIn Then
@@ -598,7 +591,9 @@ Begin
   End;
 
   If Not Debug Then
-    DisableSRLDebug:=True;
+    DisableSRLDebug:=True else
+    DisableSRLDebug:=false;
+
   ClearDebug;
 
   MainScreen.SetAngle(MS_ANGLE_HIGH);
@@ -631,26 +626,30 @@ Begin
 
   If Not IsLoggedIn Then
   Begin
+    Wait(5000);
+    DisableSRLDebug:=False;
      If Not Players[CurrentPlayer].Login Then
         TerminateScript;
     MainScreen.SetAngle(MS_ANGLE_HIGH);
+    If Not Debug Then
+      DisableSRLDebug:=True;
     Timeout.Reset;
     Timeout.Start;
   End;
 
-    If Banking Then
-      If MakeItems Then
-        ProgressReport;
+  If Banking Then
+    If MakeItems Then
+      ProgressReport;
 
-    If Timeout.GetTime>300000 Then
-    Begin
-      Writeln('Nothing has happened for too long, shutting down!- took a screenshot, send pic to ashaman (in the logs folder)');
-      TakeScreenshot('HerbFail');
-      TerminateScript;
-    End;
+  If Timeout.GetTime>300000 Then
+  Begin
+    Writeln('Nothing has happened for too long, shutting down!- took a screenshot, send pic to ashaman (in the logs folder)');
+    TakeScreenshot('HerbFail');
+    TerminateScript;
+  End;
 
-    If Players[CurrentPlayer].Booleans[0] Then
-      BreakHandler(Players[CurrentPlayer].Integers[0],Players[CurrentPlayer].Integers[1],Bir,Bfr);
+  If Players[CurrentPlayer].Booleans[0] Then
+    BreakHandler(Players[CurrentPlayer].Integers[0],Players[CurrentPlayer].Integers[1],Bir,Bfr);
 End;
 
 Begin
