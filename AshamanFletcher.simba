@@ -63,7 +63,7 @@ var
   debug: Boolean;
 
 const
-  scriptVersion = '1.7';
+  scriptVersion = '1.8';
 
 procedure declarePlayers();
 var
@@ -123,12 +123,12 @@ begin
     checkBoxDefaults := ['True','True','True', 'False'];
 
     comboBoxLabels := ['CutOrString','Location','QuickLoad'];                                                // same as editBoxLabels but for combo boxes (drop down boxes)
-    comboBoxDefaults := ['Cut','BANK_NPC_BLUE','PRESET_1'];
+    comboBoxDefaults := ['Cut','NPC_BLUE','PRESET_1'];
 
     // this needs to be done for every element in the comboBoxLabels array
     setLength(comboBoxItems, length(comboBoxLabels));
     comboBoxItems[0] := ['Cut', 'String'];       // all the options available for the first combo box
-    comboBoxItems[1] := ['BANK_NPC_BLUE', 'BANK_NPC_GREY', 'BANK_NPC_GREEN', 'BANK_NPC_DRAYNOR', 'BANK_NPC_ROGUES_DEN', 'BANK_BOOTH', 'BANK_CHEST_SW', 'BANK_CHEST_SHANTAY', 'BANK_CHEST_DUEL', 'BANK_CHEST_CW', 'BANK_CHEST_GROTTO', 'BANK_CHEST_BURTHORPE'];       // all the options available for the first combo box
+    comboBoxItems[1] := ['NPC_BLUE', 'NPC_GREY', 'NPC_GREEN', 'NPC_DRAYNOR', 'BANK_BOOTH', 'CHEST_SW', 'CHEST_SHANTAY', 'CHEST_DUEL', 'CHEST_CW', 'CHEST_GROTTO', 'CHEST_LUMBRIDGE', 'TABLE_BURTHORPE'];       // all the options available for the first combo box
     comboBoxItems[2] := ['PRESET_1', 'PRESET_2'];
   end;
 end;
